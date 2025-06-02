@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>protocolo CHAP</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div id="main-panel">
+            <div id="log-in-panel">
+                <div class="mensaje-superior" v-if="showMessage">
+                    <h1>Esperando respuesta del servidor</h1>
+                </div>
+
+                <div v-if="showLogIn">
+                    <span id="userDoesNotExist" v-if="!userExist">El usuario no existe</span>
+                    <form @submit.prevent="handleSubmit" v-if="showNameForm">
+                        <h2>Bienvenido, ingrese su usuario</h2>
+                        <div>
+                            <label for="username">Usuario:</label>
+                            <input type="text" id="username" name="username" v-model="username" required>
+                        </div>
+                        <button id="submitButton" type="submit">Enviar</button>
+                    </form>
+
+                    <div v-if="showAnswerForm">
+                        <h2>La información enviada es</h2>
+                        <ul>
+                            <li><b>Id:</b> {{ id }}</li>
+                            <li><b>Número aleatorio:</b> {{ randomNumber }} </li>
+                        </ul>
+                        <br>
+                        <form @submit.prevent="createHashForClient" class="hashForm">
+                            <input type="text" v-model="textToTransform" placeholder="Id +Número Aleatorio + contraseña">
+                            <button>Generar Hash</button>
+                        </form>
+                        <span v-if="showHash"><b>Hash:</b>{{ hashCode }}</span>
+                        <form @submit.prevent="nextStep">
+                            <label for="recivedAnswer">Respuesta:</label>
+                            <input type="text" id="recivedAnswer" name="recivedAnswer" v-model="recivedAnswer" placeholder="Ingresa el hash obtenido" required>
+                            <br>
+                            <button id="submitButton" type="submit">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="accessMessage" v-if="!showLogIn" :class="accessClass">
+                    <h1>{{ accessMessage }}</h1>
+                </div>
+            </div>
+
+            <div id="simulation-panel">
+                <div id="buttonsPanel" v-if="haveShowButtons">
+                    <button @click="showUserForm" >Crear usuario</button>
+                    <button @click="showUsersPanel">Ver usuarios</button>
+                </div>
+                <div id="usersPanel" v-if="!haveShowButtons">
+                    <button @click="showUsersPanel">Ver usuarios</button>
+                </div>
+                <h1>Panel de simulación</h1>
+                <div class="information" v-if="showInformation">
+                    <h4>Información</h4>
+                    <ul>
+                        <li><b>Id:</b> {{ id }}</li>
+                        <li> <b>Número aleatorio:</b> {{ randomNumber }} </li>
+                        <li v-if="showStage3"> <b>Respuesta recibida:</b> {{ recivedAnswer }} </li>
+                        <li v-if="showStage4"> <b>Respuesta esperada:</b> {{ expectedAnswer }} </li>
+                    </ul>
+                </div>
+                <label>{{ currentMessage }}</label>
+                <div class="stages-container">
+                    <div id="stage1" class="stage-circle" v-if="showStage1">
+                        <h3>Usuario<br>recibido</h3>
+                    </div>
+                    <img id="arrow-1" class="arrow" src="flecha.png" alt="" v-if="showStage2">
+                    <div id="stage2" class="stage-circle" v-if="showStage2">
+                        <h3>Reto<br>enviado</h3>
+                    </div>
+                    <img id="arrow-2" class="arrow" src="flecha.png" alt="" v-if="showStage3">
+                    <div id="stage3" class="stage-circle" v-if="showStage3">
+                        <h3>Respuesta<br>recibida</h3>
+                    </div>
+                    <img id="arrow-3" class="arrow" src="flecha.png" alt="" v-if="showStage4">
+                    <div id="stage4" class="stage-circle" v-if="showStage4">
+                        <h3>Validación<br>de<br>respuesta</h3>
+                    </div>
+                    <div id="allowed" class="stage-circle" v-if="showAllowed">
+                        <h3>Acceso<br>permitido</h3>
+                    </div>
+                    <div id="denied" class="stage-circle" v-if="showDenied">
+                        <h3>Acceso<br>denegado</h3>
+                    </div>
+                </div>
+
+                <button v-if="showButton" @click="nextStep" class="next-button">{{ buttonText }}</button>
+            </div>
+
+            <div v-if="showFormUser" id="form-container">
+                <div id="form-user">
+                    <h2>Crear usuario</h2>
+                    <form @submit.prevent="createUser">
+                        <div>
+                            <label for="userName">Nombre de usuario:</label>
+                            <input type="text" id="userName" v-model="userToCreate" required>
+                        </div>
+                        <div>
+                            <label for="password">Contraseña:</label>
+                            <input type="password" id="password" v-model="passwordToCreate" required>
+                        </div>
+                        <button id="submitButton" type="submit">Crear</button>
+                    </form>
+                </div>
+            </div>
+
+            <div v-if="showUsers" id="form-container">
+                <div id="users-panel">
+                    <div id="head">
+                        <button @click="hideUsersPanel">Cerrar</button>
+                    </div>
+                    <h2>Usuarios</h2>
+                    <div class="users-table-container">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Contraseña</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(user, index) in users" :key="index">
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.password }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
