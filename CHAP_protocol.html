@@ -120,6 +120,10 @@
 
             <div v-if="showFormUser" id="form-container">
                 <div id="form-user" style="padding-right: 4vw !important;">
+                    <div id="close-container">
+                        <button class="btn-minus special-button red" style="margin-left: 0; margin-bottom: 7vh;" @click="hideUserForm">
+                            <p><i class="fa-solid fa-xmark"></i>Cerrar</p></button>
+                    </div>
                     <h2>Crear usuario</h2>
                     <form @submit.prevent="createUser">
                         <div>

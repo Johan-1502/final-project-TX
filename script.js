@@ -158,6 +158,9 @@ new Vue({
         showUserForm() {
             this.showFormUser = true;
         },
+        hideUserForm() {
+            this.showFormUser = false;
+        },
         createUser() {
             this.users.push({ username: this.userToCreate, password: this.passwordToCreate });
             this.userToCreate = "";

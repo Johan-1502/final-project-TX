@@ -769,3 +769,14 @@ select.control-form {
 .styled-table tbody tr:hover {
     background-color: #e0f7fa;
 }
+
+#close-container {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+#close-container .btn-minus {
+    margin-left: 0 !important;
+    margin-bottom: 5vh !important;
+}
