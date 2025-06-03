@@ -91,12 +91,13 @@ new Vue({
                         this.showLogIn = false;
                         this.showAllowed = true;
                         this.currentMessage = "Acceso concedido al usuario";
-                        this.accessMessage = "Acceso concedido al sistema"
+                        this.accessMessage = "Acceso concedido al sistema";
+                        this.accessClass = "success-message";
                     } else {
                         this.showLogIn = false;
                         this.showDenied = true;
                         this.currentMessage = "Acceso denegado al usuario";
-                        this.accessMessage = "Acceso denegado al sistema"
+                        this.accessMessage = "Acceso denegado al sistema";
                         this.accessClass = "error-message";
                     }
                     this.buttonText = "Reiniciar simulación"
