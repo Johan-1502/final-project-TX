@@ -40,7 +40,7 @@ new Vue({
         handleSubmit() {
             this.haveShowButtons = false;
             this.showStage1 = true;
-            this.currentMessage = "El usuario " + this.username + " está intentando ingresar";
+            this.currentMessage = "Conexón establecida con el usuario";
             this.showButton = true;
             this.showMessage = true;
         },
@@ -49,22 +49,11 @@ new Vue({
             this.addStep();
             switch (this.step) {
                 case 2:
-                    const user = this.users.find(u => u.username === this.username)
-                    if (user) {
-                        this.userExist = true;
-                        this.id++;
-                        this.showInformation = true;
-                        this.randomNumber = Math.floor(10000 + Math.random() * 90000);
-                        this.currentMessage = "Se ha generado el código aleatorio " + this.randomNumber + " para enviar";
-                    } else {
-                        this.haveShowButtons = true;
-                        this.currentMessage = "El usuario no existe";
-                        this.userExist = false;
-                        this.showMessage = false;
-                        this.step = 1;
-                        this.showButton = false;
-                        this.showStage1 = false;
-                    }
+                    this.userExist = true;
+                    this.id++;
+                    this.showInformation = true;
+                    this.randomNumber = Math.floor(10000 + Math.random() * 90000);
+                    this.currentMessage = "Se ha generado el código aleatorio " + this.randomNumber + " para enviar";
                     break;
                 case 3:
                     this.showMessage = false;
@@ -143,7 +132,6 @@ new Vue({
         createHashForClient() {
             document.activeElement.blur();
             this.hashCode = CryptoJS.MD5(this.textToTransform).toString();
-            const password = this.searchUserPassword();
             this.showHash = true;
         },
         generateHash() {

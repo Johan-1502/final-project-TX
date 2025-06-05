@@ -373,7 +373,7 @@ select.control-form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 28px;
+    gap: 18px;
 }
 
 #log-in-panel form h2 {
@@ -575,7 +575,7 @@ select.control-form {
 
 .answer-form-container .hashForm {
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     gap: 10px;
     align-items: center;
     width: 100%;
