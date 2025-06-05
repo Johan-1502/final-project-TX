@@ -47,6 +47,7 @@ new Vue({
         nextStep() {
             document.activeElement.blur();
             this.addStep();
+            let user = null;
             switch (this.step) {
                 case 2:
                     this.userExist = true;
@@ -70,19 +71,36 @@ new Vue({
                     this.currentMessage = "Información recibida por parte del usuario";
                     break;
                 case 5:
-                    this.expectedAnswer = this.generateHash();
-                    this.showStage4 = true;
-                    this.currentMessage = "Procediendo a validar la respuesta del usuario";
+                    user = this.users.find(u => u.username === this.username)
+                    if (user) {
+                        this.expectedAnswer = this.generateHash();
+                        this.showStage4 = true;
+                        this.currentMessage = "Procediendo a validar la respuesta del usuario";
+                    }else{
+                        this.expectedAnswer = "Usuario no encontrado";
+                        this.showStage4 = true;
+                        this.currentMessage = "Usuario no encontrado en el sistema";
+                    }
                     break;
                 case 6:
                     this.showMessage = false;
-                    if (this.expectedAnswer == this.recivedAnswer) {
-                        this.showLogIn = false;
-                        this.showAllowed = true;
-                        this.currentMessage = "Acceso concedido al usuario";
-                        this.accessMessage = "Acceso concedido al sistema";
-                        this.accessClass = "success-message";
+                    user = this.users.find(u => u.username === this.username)
+                    if (user) {
+                        if (this.expectedAnswer == this.recivedAnswer) {
+                            this.showLogIn = false;
+                            this.showAllowed = true;
+                            this.currentMessage = "Acceso concedido al usuario";
+                            this.accessMessage = "Acceso concedido al sistema";
+                            this.accessClass = "success-message";
+                        } else {
+                            this.showLogIn = false;
+                            this.showDenied = true;
+                            this.currentMessage = "Acceso denegado al usuario";
+                            this.accessMessage = "Acceso denegado al sistema";
+                            this.accessClass = "error-message";
+                        }
                     } else {
+                        this.currentMessage = "Acceso concedido al usuario";
                         this.showLogIn = false;
                         this.showDenied = true;
                         this.currentMessage = "Acceso denegado al usuario";
