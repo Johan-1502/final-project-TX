@@ -48,7 +48,7 @@
                             <span style="margin-top: 4vh; padding-left: 20px;" v-if="showHash"><b>● Hash: </b>{{
                                 hashCode }}</span>
                         </transition>
-                        <form @submit.prevent="nextStep">
+                        <form @submit.prevent="nextStep" class="form-hash">
                             <label for="recivedAnswer">Respuesta: </label>
                             <input type="text" class="control-form" id="recivedAnswer" name="recivedAnswer"
                                 v-model="recivedAnswer" placeholder="Ingresa el hash obtenido" required>
